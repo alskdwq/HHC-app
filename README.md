@@ -1,6 +1,6 @@
-# demo
+# HHC_covid_app
 
-A new Flutter project.
+A COVId-19 screening App created for Headwater Health Centre
 
 ## Getting Started
 
