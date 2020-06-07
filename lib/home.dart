@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
 
 class Home extends StatefulWidget {
   //boolean health from Submitted widget
-  final bool heath;
+  final bool isHealth;
 
-  Home({Key key,this.heath}) : super (key: key);
+  Home({Key key,this.isHealth}) : super (key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -31,7 +31,19 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   String titleName = "Assessment";
+  static var healthStatus = 'Unknown';
 
+  List createList() {
+    //Check if user has submitted an assessment
+    if(widget.isHealth != null){//If there is data
+      widget.isHealth? healthStatus ='Healthy' : healthStatus = 'Unhealthy';
+    }
+    //List of pages from bottom navigation bar
+    var _page = [new AssessmentPage(healthStatus: healthStatus),
+      new mailPage(),
+      new MePage()];
+    return _page;
+  }
   //List of pages from bottom navigation bar
   var _page = [new AssessmentPage(),new mailPage(),new MePage()];
 
@@ -46,7 +58,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return new Scaffold(
-      body:_page[_selectedIndex],
+      body:createList()[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,

@@ -88,7 +88,7 @@ class _SummaryState extends State<Summary> {
                         side: BorderSide(color: Colors.green)),
                     onPressed: (){
                       Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (context) => Submit(heath: isHealth,)),
+                          MaterialPageRoute(builder: (context) => Home(isHealth: isHealth,)),
                               (route) => route == null);
                     },
                     color: Colors.green,
