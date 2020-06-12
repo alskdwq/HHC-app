@@ -14,25 +14,30 @@ class MyApp extends StatelessWidget {
   static const String _title = 'demo';
 
   Future<bool> initStatus = Future<bool>.value(post_initpage('5ee2d242bed243a6a9539bd4').then((value) => value =='valid'? true: false));
-
-
-
+  Future<bool> ishealth = Future<bool>.value(true);
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: _title,
-      home: FutureBuilder<bool>(builder: (context, AsyncSnapshot<bool> snapshot) {
+      home: FutureBuilder<List<dynamic>>(builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
       if (snapshot.hasData){
+
         print('stateful home, snapshot value: '+snapshot.toString());
-        return Home(isHealth: true,);
+        if(snapshot.data[0]== true){
+          return Home(isHealth: snapshot.data[1],);
+        }
+        else if(snapshot.data[0]== false){
+          return Home();
+        }
+        return Container();
       }
       else{
         print('empty home, snapshot value: '+snapshot.toString());
-        return Home();
+        return Container();
       }
 
     },
-    future: initStatus
+    future: Future.wait([initStatus, ishealth])
       ),);
   }
   }
@@ -44,7 +49,6 @@ class Home extends StatefulWidget {
   String value;
   Home({Key key,this.isHealth,}) : super (key: key);
 
-  @override
   _HomeState createState() => _HomeState();
 }
 
