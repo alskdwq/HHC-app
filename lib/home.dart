@@ -2,7 +2,7 @@
 import 'package:demo/AssessmentPage.dart';
 import 'package:demo/MailPage.dart';
 import 'package:demo/MePage.dart';
-import 'package:demo/main.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:demo/modules/httpconnector.dart';
@@ -12,18 +12,35 @@ void main() {
 
 class MyApp extends StatelessWidget {
   static const String _title = 'demo';
+
+  Future<bool> initStatus = Future<bool>.value(post_initpage('5ee2d242bed243a6a9539bd4').then((value) => value =='valid'? true: false));
+
+
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: _title,
-      home: Home(),
-    );
+      home: FutureBuilder<bool>(builder: (context, AsyncSnapshot<bool> snapshot) {
+      if (snapshot.hasData){
+        print('stateful home, snapshot value: '+snapshot.toString());
+        return Home(isHealth: true,);
+      }
+      else{
+        print('empty home, snapshot value: '+snapshot.toString());
+        return Home();
+      }
+
+    },
+    future: initStatus
+      ),);
   }
-}
+  }
+
 
 class Home extends StatefulWidget {
   //boolean health from Submitted widget
-  final bool isHealth;
+  bool isHealth;
   String value;
   Home({Key key,this.isHealth,}) : super (key: key);
 
@@ -35,14 +52,15 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   String titleName = "Assessment";
   static var healthStatus = 'Unknown';
-  bool isExpire= false;
+  int isExpire; // default value is false， not expired
 
-  Future<void> checkStatus() async {
-    return await post_initpage('5ee2e3fb05121809388ee81a').then((String value) => {
-    print("isExpire in checkstatus: "+ isExpire.toString()),
+  Future<void> checkStatus() {
+    return post_initpage('5ee2d242bed243a6a9539bd4').then((String value) => {
+    //print("isExpire in checkstatus: "+ isExpire.toString()),
       if(value == 'expire'){
         setState((){
-          isExpire = true;
+          isExpire = 1;
+
         })
       }
     } );
@@ -52,12 +70,13 @@ class _HomeState extends State<Home> {
     if(widget.isHealth != null){//If there is data
       widget.isHealth? healthStatus ='Healthy' : healthStatus = 'Unhealthy';
     }
+    //print("healthstatus in createlist: "+ widget.isHealth.toString()+" string value: "+healthStatus);
     //List of pages from bottom navigation bar
     var _page = [new AssessmentPage(healthStatus: healthStatus),
       new mailPage(),
       new MePage()];
-    print("isExpire in createlist: "+ isExpire.toString());
-    if(isExpire){
+    //print("isExpire in createlist: "+ isExpire.toString());
+    if(isExpire == 1){
       _page[0] = new AssessmentPage(healthStatus: 'Unknown');
     }
     return _page;
@@ -74,6 +93,7 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement setState
   super.initState();
+  checkStatus();
   }
   @override
   Widget build(BuildContext context) {
