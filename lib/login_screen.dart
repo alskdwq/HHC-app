@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'dart:convert';
+import 'package:demo/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -98,7 +100,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
   final userPositionController = TextEditingController();
   AnimationController _controller;
   Animation<Size> _heightAnimation;
-
+  final storage = FlutterSecureStorage();
   @override
   void initState(){
     super.initState();
@@ -156,9 +158,11 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                     'username': userNameController.text,
                     'password': userPasswordController.text,
                   }
-                ),)
-        
-        ;
+                ),);
+        if(response.body.toString() == 'ok' || response.body.toString() == 'denied' ){// remove denied
+          await storage.write(key: "token", value: "1");
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyApp()), (route) => route == null);
+        }
         final responseData = response.body;
         print("response from server\n" + responseData);
       } catch (error) {

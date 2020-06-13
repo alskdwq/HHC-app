@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
-
+import 'package:demo/login_screen.dart';
 class MePage extends StatefulWidget{
 
   @override
@@ -92,6 +92,25 @@ class Page extends State<MePage>{
                   children: <Widget>[
                     Expanded(child: Divider(color: Colors.green,thickness: 2,),)
                   ],
+                ),
+                ButtonTheme(
+                  minWidth: 190,
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: BorderSide(color: Colors.green)),
+                    onPressed: (){
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (context) => AuthScreen()),
+                              (route) => route == null);
+                    },
+                    color: Colors.green,
+                    child: Text('logout',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
