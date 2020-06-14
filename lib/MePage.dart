@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
 import 'package:demo/login_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:demo/modules/httpconnector.dart';
 
 class MePage extends StatefulWidget{
 
@@ -16,7 +17,7 @@ class Page extends State<MePage>{
   static final storage = FlutterSecureStorage();
 
   deleteLocalStorage() async {
-    await storage.delete(key: 'name');
+    await storage.deleteAll();
   }
   static Future<String> getname()  async{
     return await storage.read(key: 'name');
@@ -113,6 +114,7 @@ class Page extends State<MePage>{
                                 side: BorderSide(color: Colors.green)),
                             onPressed: (){
                               deleteLocalStorage();// reomve this for now
+                              signout();
                               Navigator.pushAndRemoveUntil(context,
                                   MaterialPageRoute(builder: (context) => AuthScreen()),
                                       (route) => route == null);

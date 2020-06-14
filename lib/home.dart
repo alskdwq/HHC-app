@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   static final storage = FlutterSecureStorage();
   static String user_id;
 
-  Future<bool> initStatus = Future<bool>.value(post_initpage().then((value) => value =='valid'? true: false));
+  Future<bool> initStatus = Future<bool>.value(post_initpage().then((value) => value =='valid'? true: true));
   Future<bool> stayLogin = Future<bool>.value(post_validate().then((value) => value=='ok'? true:false));
   static Future<String> checkHealth() async{
     return await storage.read(key: 'healthState');
@@ -37,8 +37,9 @@ class MyApp extends StatelessWidget {
         if(snapshot.data[2] == false){
           return AuthScreen();
         }
-        //print('stateful home, snapshot value: '+snapshot.toString());
+        print('stateful home, snapshot value: '+snapshot.toString());
         if(snapshot.data[0]== true){
+          print('it goes here');
           return Home(isHealth: snapshot.data[1],);
         }
         else if(snapshot.data[0]== false){
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
         return Container();
       }
       else{
-        //print('empty home, snapshot value: '+snapshot.toString());
+        print('empty home, snapshot value: '+snapshot.toString());
         return Container();
       }
 
@@ -72,7 +73,6 @@ class _HomeState extends State<Home> {
   String titleName = "Assessment";
   static var healthStatus = 'Unknown';
   int isExpire;
-
   Future<void> checkStatus() async{
     return post_initpage().then((String value) => {
     //print("isExpire in checkstatus: "+ isExpire.toString()),
@@ -110,7 +110,6 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement setState
   super.initState();
-  checkStatus();
   }
 
   @override
@@ -118,18 +117,19 @@ class _HomeState extends State<Home> {
     // TODO: implement build
     return new Scaffold(
 
-      body:RefreshIndicator(
-        onRefresh: checkStatus,
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Container(
-              child: createList()[_selectedIndex],
-              height: MediaQuery.of(context).size.height,
-          ),
-        ),
+      body:
+          RefreshIndicator(
+            onRefresh: checkStatus,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                child: createList()[_selectedIndex],
+                height: MediaQuery.of(context).size.height,
+              ),
+            ),
 
-        //Stack(children: createList()[_selectedIndex])
-      ),
+            //Stack(children: createList()[_selectedIndex])
+          ),
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,

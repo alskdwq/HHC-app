@@ -21,8 +21,8 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(145, 255, 150, 1).withOpacity(0.5),
-                  Color.fromRGBO(255, 255, 145, 1).withOpacity(0.9),
+                  Colors.white.withOpacity(0.5),
+                  Colors.green.withOpacity(0.8),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -159,11 +159,18 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                     'password': userPasswordController.text,
                   }
                 ),);
-        if(response.body.toString() == 'logged'){// remove denied
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyApp()), (route) => route == null);
-        }
         final responseData = response.body;
         print("response from server\n" + responseData);
+        Map jsonData = json.decode(responseData);
+        await storage.write(key: "token", value: jsonData['token'].toString());
+        await storage.write(key: "user_id", value: jsonData['user_id'].toString());
+        await storage.write(key: "name", value: jsonData['firstname'].toString()+' '+jsonData['lastname'].toString());
+        await storage.write(key: "position", value: jsonData['position'].toString());
+        await storage.write(key: "facility", value: jsonData['facility'].toString());
+        await storage.write(key: 'healthState', value: 'Unknown');
+        if(response.body.toString() != 'denied'){
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => route == null);
+        }
       } catch (error) {
         throw error;
       }
@@ -370,7 +377,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                     ),
                     padding:
                         EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                    color: Color.fromRGBO(0, 220, 220, 1),
+                    color: Colors.green,
                     textColor: Theme.of(context).primaryTextTheme.button.color,
                   ),
                 FlatButton(
@@ -379,7 +386,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textColor: Color.fromRGBO(0, 220, 220, 1),
+                  textColor: Colors.green,
                 ),
               ],
             ),

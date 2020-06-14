@@ -9,7 +9,7 @@ Future<String> post_initpage() async{
   await storage.read(key: 'user_id').then((String value) => {
     userId = value
   });
-  print('checking user_id: '+userId);
+//  print('checking user_id: '+userId);
   var data = {
     'user_id': userId
   };
@@ -36,5 +36,21 @@ Future<String> post_validate() async{
   var response = await http.post("http://ec2-54-160-79-156.compute-1.amazonaws.com:8080/validate",
       body: json.encode(data), headers: {"Content-Type": "application/json"});
   print('validate status: '+ response.body);
+  return response.body;
+}
+
+Future<void> signout() async {
+  final storage = FlutterSecureStorage();
+  String userId;
+  await storage.read(key: 'user_id').then((String value) => {
+    userId = value
+  });
+  var data = {
+    'user_id': userId,
+  };
+  final response = await http
+      .post('http://ec2-54-160-79-156.compute-1.amazonaws.com:8080/signout',body: json.encode(data)
+    );
+  print('signed out');
   return response.body;
 }
