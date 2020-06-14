@@ -4,10 +4,12 @@ import './CheckboxList.dart';
 
 //Data package which sends to next page
 class Data {
-  bool emergency = false;
-  bool closeContact = false;
-  void setEmergency(){emergency = true;}
-  void setCloseContact(){closeContact = true;}
+  bool travel = false;
+  bool closeContactL = false;
+  bool closeContactW = false;
+  void setTravel(){travel = true;}
+  void setCloseContactLive(){closeContactL = true;}
+  void setCloseContactWork(){closeContactW = true;}
 }
 
 class Questionnaire extends StatefulWidget{
@@ -30,23 +32,11 @@ class PageQuestionnaire extends State<Questionnaire>{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('Are you currently experiencing any of these issues?',
+              Text('Have you travelled outside of Ontario?',
                 style:_size30Bold,
               ),
               Padding(padding: EdgeInsets.all(50),),
-              Text('• Severe difficulty breathing',
-                style: new TextStyle(fontWeight: FontWeight.bold),),
-              Text('  (struggling for each breathn, can only speak in single words)'),
-              Padding(padding: EdgeInsets.all(10),),
-              Text('• Severe chest pain',
-                style: new TextStyle(fontWeight: FontWeight.bold),),
-              Text('  (constant tightness or crushing sensation)'),
-              Padding(padding: EdgeInsets.all(10),),
-              Text('• Feeling confused or unsure of where you are',
-                style: new TextStyle(fontWeight: FontWeight.bold),),
-              Padding(padding: EdgeInsets.all(10),),
-              Text('• Losing consciousness',
-                style: new TextStyle(fontWeight: FontWeight.bold),),
+              Text('Person who travelled outside of Ontario advise to self-isolated for 14 days.'),
             ],
           ),
         ),
@@ -61,7 +51,30 @@ class PageQuestionnaire extends State<Questionnaire>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(padding: EdgeInsets.all(10),),
-              Text('In the last 14 days, have you been in close physical contact with someone who test positive for COVID-19?',
+              Text('In the last 14 days, have you been in close physical contact with someone you live with who test positive for COVID-19?',
+                style: _size30Bold,
+              ),
+              Padding(padding: EdgeInsets.all(40),),
+              Text('  Close physical contact means:'),
+              Padding(padding: EdgeInsets.all(10),),
+              Text('• being less than 2 metres away in the same area for over 15 minutes', style: new TextStyle(fontWeight: FontWeight.bold),),
+              Padding(padding: EdgeInsets.all(10),),
+              Text('• living in the same home', style: new TextStyle(fontWeight: FontWeight.bold),),
+            ],
+          ),
+        ),
+      ),
+    ),
+    //Question 3
+    Container(
+      child: Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(padding: EdgeInsets.all(10),),
+              Text('In the last 14 days, have you been in close physical contact with someone at work who test positive for COVID-19?',
                 style: _size30Bold,
               ),
               Padding(padding: EdgeInsets.all(40),),
@@ -95,11 +108,15 @@ class PageQuestionnaire extends State<Questionnaire>{
     setState(() {
       switch(_index){
         case 0:{
-          data.setEmergency();
+          data.setTravel();
           break;
         }
         case 1:{
-          data.setCloseContact();
+          data.setCloseContactLive();
+          break;
+        }
+        case 2:{
+          data.setCloseContactWork();
           break;
         }
         default:{

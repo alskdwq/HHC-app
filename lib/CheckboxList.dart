@@ -4,11 +4,12 @@ import 'package:demo/Summary.dart';
 
 //Data package from this page
 class CheckboxData {
-  bool eme = false;
-  bool close = false;
-  List symptoms = [false,false,false,false];
+  bool travel = false;
+  bool closeL = false;
+  bool closeW = false;
+  List symptoms = [false,false,false,false,false,false,false,false];
 
-  CheckboxData({this.eme, this.close, this.symptoms});
+  CheckboxData({this.travel, this.closeL, this.closeW, this.symptoms});
 }
 
 class CheckboxList extends StatefulWidget{
@@ -23,11 +24,15 @@ class CheckboxList extends StatefulWidget{
 class CheckboxListPage extends State<CheckboxList>{
   static TextStyle _bold = new TextStyle(fontWeight: FontWeight.bold);
   final CheckboxData checkboxData = CheckboxData();
-  var checkList =[false,false,false,false];
+  var checkList =[false,false,false,false,false,false,false,false];
   var symptomsList = [
-    Text('Fever', style: _bold),
-    Text('Chill', style: _bold),
-    Text('Sore throat', style: _bold),
+    Text('Fever or chill', style: _bold),
+    Text('New or worsening respiratory illness symptoms', style: _bold),
+    Text('Runny nose, sneezing or nasal congestion', style: _bold),
+    Text('Fatigue or malaise', style: _bold),
+    Text('No taste or no smell', style: _bold),
+    Text('Digestive symptoms', style: _bold),
+    Text('Headache', style: _bold),
     Text('None of above', style: _bold),
   ];
 
@@ -39,12 +44,13 @@ class CheckboxListPage extends State<CheckboxList>{
       for (var s in checkList){
         if (s) isEmpty = false;
       }
-      if (isEmpty) checkList[3] = true;
+      if (isEmpty) checkList[7] = true;
 
       //Packaging data and move to next page with data
       checkboxData.symptoms = checkList;
-      checkboxData.close = widget.yndata.closeContact;
-      checkboxData.eme = widget.yndata.emergency;
+      checkboxData.closeL = widget.yndata.closeContactL;
+      checkboxData.closeW = widget.yndata.closeContactW;
+      checkboxData.travel = widget.yndata.travel;
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) => Summary(checkboxData:checkboxData)),
               (route) => route == null);
@@ -59,103 +65,177 @@ class CheckboxListPage extends State<CheckboxList>{
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: new Column(
-          children: <Widget>[
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.all(10),),
-                  Text('Are you currently experiencing any of these symptoms? Choose any/all that apply.',
-                    style:_bold,),
-                  //Fever
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        activeColor: Colors.grey,
-                        value: checkList[0],
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            if(newValue==true){checkList[3]=false;}
-                            checkList[0] = newValue;
-                          });
-                        },
-                      ),
-                      Padding(padding: EdgeInsets.all(5),),
-                      symptomsList[0],
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.all(10),),
-                  //Chill
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        activeColor: Colors.grey,
-                        value: checkList[1],
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            if(newValue==true){checkList[3]=false;}
-                            checkList[1] = newValue;
-                          });
-                        },
-                      ),
-                      Padding(padding: EdgeInsets.all(5),),
-                      symptomsList[1],
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.all(10),),
-                  //Sore throat
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        activeColor: Colors.grey,
-                        value: checkList[2],
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            if(newValue==true){checkList[3]=false;}
-                            checkList[2] = newValue;
-                          });
-                        },
-                      ),
-                      Padding(padding: EdgeInsets.all(5),),
-                      symptomsList[2],
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.all(10),),
-                  //None of above
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        activeColor: Colors.grey,
-                        value: checkList[3],
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            if(newValue == true) checkList.fillRange(0, 3, false);
-                            checkList[3] = newValue;
-                          });
-                        },
-                      ),
-                      Padding(padding: EdgeInsets.all(5),),
-                      symptomsList[3],
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.all(10),),
-                  Center(
-                    child: ButtonTheme(
-                      child: FlatButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                            side: BorderSide(color: Colors.green)),
-                        child: Text('Submit'),
-                        color: Colors.green,
-                        onPressed: submit,
+        child: SingleChildScrollView(
+          child: new Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.all(10),),
+                    Text('Are you currently experiencing any of these symptoms? Choose any/all that apply.',
+                      style:_bold,),
+
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[0],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[0] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[0],
+                      ],
                     ),
-                      minWidth: 200.0,
-                    ),),
-                ],
-              ),
-            )
-          ],
+                    Padding(padding: EdgeInsets.all(10),),
+
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[1],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[1] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[1],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[2],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[2] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[2],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[3],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[3] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[3],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[4],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[4] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[4],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[5],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[5] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[5],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[6],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue==true){checkList[7]=false;}
+                              checkList[6] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[6],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+
+                    //None of above
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.grey,
+                          value: checkList[7],
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if(newValue == true) checkList.fillRange(0, 7, false);
+                              checkList[7] = newValue;
+                            });
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5),),
+                        symptomsList[7],
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(10),),
+                    Center(
+                      child: ButtonTheme(
+                        child: FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Colors.green)),
+                          child: Text('Submit'),
+                          color: Colors.green,
+                          onPressed: submit,
+                      ),
+                        minWidth: 200.0,
+                      ),),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

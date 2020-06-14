@@ -1,5 +1,4 @@
 import 'package:demo/CheckboxList.dart';
-import 'package:demo/Submitted.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/home.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -17,7 +16,9 @@ class _SummaryState extends State<Summary> {
 
   //List of strings which print on the screen
   List review = new List();
-  List symList = ['Fever, ', 'Chill, ', 'Sore throat, ','No symptoms'];
+  List symList = ['Fever/chill, ', 'New or worse respiratory illness symptoms, ',
+    'New or worse runny nose or nasal congestion, ','Fatigue or malaise, ','No taste, ','Digestive symptoms, '
+    ,'Headache, ','No symptoms'];
   //Symptoms that the user has
   String syms = '';
   //User health status is true as default
@@ -55,6 +56,10 @@ class _SummaryState extends State<Summary> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(review[1],style: new TextStyle(fontSize: 20),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(review[2],style: new TextStyle(fontSize: 20),),
                   ),
                   Padding(padding: const EdgeInsets.all(15),),
                   Text('You have following symptoms:',style: new TextStyle(fontSize: 20),),
@@ -114,17 +119,23 @@ class _SummaryState extends State<Summary> {
   }
 
   void addReview(){
-    if (widget.checkboxData.eme){
+    if (widget.checkboxData.travel){
       isHealth = false;
-      review.add('You are currently experiencing emergent issues.');
+      review.add('You have traveled outside of Ontario.');
     } else{
-      review.add('You are not experiencing emergent issues.');
+      review.add('You haven''t traveled outside of Ontario.');
     }
-    if (widget.checkboxData.close){
+    if (widget.checkboxData.closeL){
       isHealth = false;
-      review.add('You have been in close physical contact with someone who test positive for COVID-19.');
+      review.add('You have been in close physical contact with someone you live with who test positive for COVID-19.');
     } else{
-      review.add('You did not contact with someone who test positive for COVID-19.');
+      review.add('You did not contact with someone you live with who test positive for COVID-19.');
+    }
+    if (widget.checkboxData.closeW){
+      isHealth = false;
+      review.add('You have been in close physical contact with someone at work who test positive for COVID-19.');
+    } else{
+      review.add('You did not contact with someone at work who test positive for COVID-19.');
     }
     for(var i = 0; i < symList.length;i++) {
       if (widget.checkboxData.symptoms[i]) {
