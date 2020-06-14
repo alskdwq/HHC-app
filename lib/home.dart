@@ -2,27 +2,42 @@
 import 'package:demo/AssessmentPage.dart';
 import 'package:demo/MailPage.dart';
 import 'package:demo/MePage.dart';
+import 'package:demo/login_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:demo/modules/httpconnector.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
   static const String _title = 'demo';
 
-  Future<bool> initStatus = Future<bool>.value(post_initpage('5ee2d242bed243a6a9539bd4').then((value) => value =='valid'? true: false));
-  Future<bool> ishealth = Future<bool>.value(true);
+  static final storage = FlutterSecureStorage();
+  static String user_id;
+
+  Future<bool> initStatus = Future<bool>.value(post_initpage().then((value) => value =='valid'? true: false));
+  Future<bool> stayLogin = Future<bool>.value(post_validate().then((value) => value=='ok'? true:false));
+  static Future<String> checkHealth() async{
+    return await storage.read(key: 'healthState');
+  }
+  Future<bool> ishealth = Future<bool>.value(checkHealth().then((value) => value=='healthy'?true:false));
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: _title,
-      home: FutureBuilder<List<dynamic>>(builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+      home: FutureBuilder(builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
       if (snapshot.hasData){
 
-        print('stateful home, snapshot value: '+snapshot.toString());
+        if(snapshot.data[2] == false){
+          return AuthScreen();
+        }
+        //print('stateful home, snapshot value: '+snapshot.toString());
         if(snapshot.data[0]== true){
           return Home(isHealth: snapshot.data[1],);
         }
@@ -32,12 +47,12 @@ class MyApp extends StatelessWidget {
         return Container();
       }
       else{
-        print('empty home, snapshot value: '+snapshot.toString());
+        //print('empty home, snapshot value: '+snapshot.toString());
         return Container();
       }
 
     },
-    future: Future.wait([initStatus, ishealth])
+    future: Future.wait([initStatus, ishealth,stayLogin])
       ),);
   }
   }
@@ -56,15 +71,14 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   String titleName = "Assessment";
   static var healthStatus = 'Unknown';
-  int isExpire; // default value is false， not expired
+  int isExpire;
 
-  Future<void> checkStatus() {
-    return post_initpage('5ee2d242bed243a6a9539bd4').then((String value) => {
+  Future<void> checkStatus() async{
+    return post_initpage().then((String value) => {
     //print("isExpire in checkstatus: "+ isExpire.toString()),
       if(value == 'expire'){
         setState((){
-          isExpire = 1;
-
+          // isExpire = 1; removed for now, expire will not be set on backend , this does not work
         })
       }
     } );
@@ -74,7 +88,6 @@ class _HomeState extends State<Home> {
     if(widget.isHealth != null){//If there is data
       widget.isHealth? healthStatus ='Healthy' : healthStatus = 'Unhealthy';
     }
-    //print("healthstatus in createlist: "+ widget.isHealth.toString()+" string value: "+healthStatus);
     //List of pages from bottom navigation bar
     var _page = [new AssessmentPage(healthStatus: healthStatus),
       new mailPage(),
@@ -99,6 +112,7 @@ class _HomeState extends State<Home> {
   super.initState();
   checkStatus();
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

@@ -159,8 +159,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                     'password': userPasswordController.text,
                   }
                 ),);
-        if(response.body.toString() == 'ok' || response.body.toString() == 'denied' ){// remove denied
-          await storage.write(key: "token", value: "1");
+        if(response.body.toString() == 'logged'){// remove denied
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyApp()), (route) => route == null);
         }
         final responseData = response.body;
@@ -190,6 +189,10 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
         
         ;
         final responseData = response.body;
+        Map jsonData = json.decode(responseData);
+        await storage.write(key: "token", value: jsonData['token'].toString());
+        await storage.write(key: "user_id", value: jsonData['user_id'].toString());
+        await storage.write(key: "name", value: jsonData['first'].toString()+' '+jsonData['last'].toString());
         print("response from server\n" + responseData);
       } catch (error) {
         throw error;

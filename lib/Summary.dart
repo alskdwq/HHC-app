@@ -2,6 +2,7 @@ import 'package:demo/CheckboxList.dart';
 import 'package:demo/Submitted.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/home.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Summary extends StatefulWidget {
   //Data from last page(CheckboxList.dart)
@@ -21,7 +22,13 @@ class _SummaryState extends State<Summary> {
   String syms = '';
   //User health status is true as default
   bool isHealth = true;
+  static final storage = FlutterSecureStorage();
 
+  static void setHealthState(bool isHealth) async {
+    String status =isHealth==true?'healthy':'unhealthy';
+    print('setting the health status: '+ status);
+    await storage.write(key: 'healthState', value: isHealth== true?'healthy':'unhealthy');
+  }
   Container showReview(){
     Container container = new Container(
       child: Column(
@@ -87,6 +94,7 @@ class _SummaryState extends State<Summary> {
                         borderRadius: BorderRadius.circular(18.0),
                         side: BorderSide(color: Colors.green)),
                     onPressed: (){
+                      setHealthState(isHealth);
                       Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (context) => Home(isHealth: isHealth,)),
                               (route) => route == null);
