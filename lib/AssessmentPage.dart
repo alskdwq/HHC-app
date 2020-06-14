@@ -84,7 +84,7 @@ class StatusKnown extends State<AssessmentPage> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.all(20.0),
-                                child: Text(time),
+                                child: Text('Last recorded: '+ time),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
