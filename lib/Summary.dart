@@ -130,7 +130,6 @@ class _SummaryState extends State<Summary> {
 
   @override
   void initState() {
-    // TODO: implement initState
     addReview();
     super.initState();
   }

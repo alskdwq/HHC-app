@@ -155,7 +155,8 @@ class PageQuestionnaire extends State<Questionnaire>{
                     ),
                   ),
                 ],
-              ),),
+              ),
+              ),
             ),
           ],
         )
