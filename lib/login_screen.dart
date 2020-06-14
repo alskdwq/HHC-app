@@ -21,8 +21,8 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(215, 117, 255, 1).withOpacity(0.5),
-                  Color.fromRGBO(255, 188, 117, 1).withOpacity(0.9),
+                  Color.fromRGBO(145, 255, 150, 1).withOpacity(0.5),
+                  Color.fromRGBO(255, 255, 145, 1).withOpacity(0.9),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -47,7 +47,7 @@ class AuthScreen extends StatelessWidget {
                       // ..translate(-10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.deepOrange.shade900,
+                        color: Colors.green,
                         boxShadow: [
                           BoxShadow(
                             blurRadius: 8,
@@ -370,7 +370,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                     ),
                     padding:
                         EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                    color: Theme.of(context).primaryColor,
+                    color: Color.fromRGBO(0, 220, 220, 1),
                     textColor: Theme.of(context).primaryTextTheme.button.color,
                   ),
                 FlatButton(
@@ -379,7 +379,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textColor: Theme.of(context).primaryColor,
+                  textColor: Color.fromRGBO(0, 220, 220, 1),
                 ),
               ],
             ),
