@@ -194,6 +194,24 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
         await storage.write(key: "user_id", value: jsonData['user_id'].toString());
         await storage.write(key: "name", value: jsonData['first'].toString()+' '+jsonData['last'].toString());
         print("response from server\n" + responseData);
+        showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('Success'),
+                  content: Text('Sign Up Complete!'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        setState(() {
+                          _authMode = AuthMode.Login;
+                        });
+                        _controller.reverse();
+                      },
+                    )
+                  ],
+                ));
       } catch (error) {
         throw error;
       }
