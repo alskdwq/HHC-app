@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:demo/modules/httpconnector.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,6 +74,20 @@ class _HomeState extends State<Home> {
   String titleName = "Assessment";
   static var healthStatus = 'Unknown';
   int isExpire;
+  requestPermiss() async {
+    //请求权限
+    Map<PermissionGroup, PermissionStatus> permissions =
+    await PermissionHandler()
+        .requestPermissions([PermissionGroup.location,PermissionGroup.camera]);
+    //校验权限
+    if(permissions[PermissionGroup.camera] != PermissionStatus.granted){
+      print("无照相权限");
+    }
+    if(permissions[PermissionGroup.location] != PermissionStatus.granted){
+      print("无定位权限");
+    }
+  }
+
   Future<void> checkStatus() async{
     return post_initpage().then((String value) => {
     //print("isExpire in checkstatus: "+ isExpire.toString()),
