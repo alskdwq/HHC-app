@@ -27,7 +27,7 @@ class CheckboxListPage extends State<CheckboxList>{
   var checkList =[false,false,false,false,false,false,false,false];
   var symptomsList = [
     Text('Fever or chill', style: _bold),
-    Text('New or worsening respiratory illness symptoms', style: _bold),
+    Text('New or worsening respiratory illness', style: _bold),
     Text('Runny nose, sneezing or nasal congestion', style: _bold),
     Text('Fatigue or malaise', style: _bold),
     Text('No taste or no smell', style: _bold),
