@@ -8,9 +8,9 @@ class Data {
   final List questions;
   final List options;
   final int userId;
-  final int quesId;
+  final String quesId;
 
-  Data(this.questions,this.options,{this.userId,this.quesId});
+  Data(this.questions,this.options,this.quesId,{this.userId});
 
 }
 
@@ -32,22 +32,25 @@ class _QuestionnaireState extends State<Questionnaire> {
   static TextStyle _bold = TextStyle(fontWeight: FontWeight.bold);
   static TextStyle _size30Bold =  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  List options = [["Yes","No"],["I did","I didn't"],
-    ["Fever","Cough","Runny nose","None of above"],["Yes","No"]]  ;
-  List questions = ["Have you contacted confirmed cases?",
-    "Have you went to public places?",
-    "Do you have any of following symptoms?",
-    "Are you sure?"];
+  List options = [["x","x"],["xx","xxx"],
+    ["xxx","xxx","xx x","xx x x"],["xx","xxx"]]  ;
+  List questions = ["xxxxxx",
+    "xxxxx",
+    "xxxxxx",
+    "x x x?"];
 
   //Get JSON data from server
   var url = 'http://ec2-54-160-79-156.compute-1.amazonaws.com:8080/questionnaire';
-  Future<String> getData(int index) async {
+  Data data;
+  Future<Data> getData(int index) async {
     var response = await http. get(url);
     var jsonData = json.decode(response.body);
     print (jsonData);
-//    var jsonObj = jsonData[index];
-    Data data =  Data(jsonData["questions"],jsonData["options"]);
-    return 'Done';
+    print (jsonData['ques_id']);
+    data =  Data(jsonData['questions'],jsonData['options'],jsonData['ques_id']);
+    questions = data.questions;
+    options = data.options;
+    return data;
   }
 
   static List createBooleanList(){
@@ -122,7 +125,7 @@ class _QuestionnaireState extends State<Questionnaire> {
                   side: BorderSide(color: Colors.green),
                 ),
                 color: Colors.green,
-                onPressed: null,
+                onPressed: nextQuestion,
               ),
             ),
           ),
@@ -188,7 +191,6 @@ class _QuestionnaireState extends State<Questionnaire> {
 
   @override
   void initState() {
-    getData(0);
     super.initState();
   }
 
@@ -198,28 +200,40 @@ class _QuestionnaireState extends State<Questionnaire> {
       appBar: new AppBar(
         title: new Text('Questionnaire',),backgroundColor: Colors.green,centerTitle: true,
       ),
-      body: new Column(
-        children: <Widget>[
-          //Questions
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(questions[index],
-                    style: _size30Bold,)
-                ],
-              ),
-            )
-          ),
+      body: Center(
+        child: FutureBuilder(
+            future: getData(0),
+            builder: (context, snapshot){
+              if(snapshot.hasData){
+                return new Column(
+                  children: <Widget>[
+                    //Questions
+                    Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(data.questions[index],
+                                style: _size30Bold,)
+                            ],
+                          ),
+                        )
+                    ),
 
-          //Buttons
-          Center(
-            child: typeCheck(options[index]),
-          )
-        ],
-      ),
+                    //Buttons
+                    Center(
+                      child: typeCheck(data.options[index]),
+                    )
+                  ],
+                );
+              } else if (snapshot.hasError){
+                return Text('ERROR');
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
+      )
     );
   }
 }
