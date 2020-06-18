@@ -1,6 +1,5 @@
-import 'package:demo/home.dart';
 import 'package:flutter/material.dart';
-import './YesNo.dart';
+import './Questionnaire.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -34,7 +33,6 @@ class StatusKnown extends State<AssessmentPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     checkHealth();
     super.initState();
   }
