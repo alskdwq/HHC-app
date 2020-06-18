@@ -3,20 +3,23 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-//class Data {
-//  List questions;
-//  List options;
-//
-//  Data({this.questions,this.options});
-//
-//  factory Data.fromJson(Map<String, dynamic> json){
-//    return Data(
-//      questions: json["questions"],
-//      options: json["options"],
-//    );
-//  }
-//}
-//const url = 'http://ADDRESS/questionnaire';
+//Data fetched from server
+class Data {
+  final List questions;
+  final List options;
+  final int userId;
+  final int quesId;
+
+  Data(this.questions,this.options,{this.userId,this.quesId});
+
+}
+
+//answer JSON format
+var answers = {
+  "user_id":0,
+  "ques_id":0,
+  "answers":[]
+};
 
 class Questionnaire extends StatefulWidget {
   @override
@@ -28,12 +31,23 @@ class _QuestionnaireState extends State<Questionnaire> {
   List boolList = createBooleanList();
   static TextStyle _bold = TextStyle(fontWeight: FontWeight.bold);
   static TextStyle _size30Bold =  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+
   List options = [["Yes","No"],["I did","I didn't"],
     ["Fever","Cough","Runny nose","None of above"],["Yes","No"]]  ;
   List questions = ["Have you contacted confirmed cases?",
     "Have you went to public places?",
     "Do you have any of following symptoms?",
     "Are you sure?"];
+
+  //Get JSON data from server
+  var url = 'http://ec2-54-160-79-156.compute-1.amazonaws.com:8080/questionnaire';
+  Future<String> getData(int index) async {
+    var response = await http. get(url);
+    var jsonData = json.decode(response.body);
+    print (jsonData);
+    Data data =  Data(jsonData["questions"],jsonData["options"]);
+    return 'Done';
+  }
 
   static List createBooleanList(){
     int length = 16;
@@ -42,8 +56,10 @@ class _QuestionnaireState extends State<Questionnaire> {
     return boolList;
   }
 
-  void nextQuestion(){
+
+  void nextQuestion(String answer){
     setState(() {
+      //TODO send answer to answer list
       index++;
     });
   }
@@ -63,7 +79,7 @@ class _QuestionnaireState extends State<Questionnaire> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.green)),
-              onPressed: nextQuestion,
+              onPressed: () => nextQuestion(options[0]),
               color: Colors.green,
               child: Text(options[0]),
             ),
@@ -76,7 +92,7 @@ class _QuestionnaireState extends State<Questionnaire> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.green)),
-              onPressed: nextQuestion,
+              onPressed: () => nextQuestion(options[1]),
               color: Colors.green,
               child: Text(options[1]),
             ),
@@ -168,6 +184,12 @@ class _QuestionnaireState extends State<Questionnaire> {
     } else {//It is a checkbox list
       return createCheckBoxList(optionsList);
     }
+  }
+
+  @override
+  void initState() {
+    getData(0);
+    super.initState();
   }
 
   @override
