@@ -45,6 +45,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     var response = await http. get(url);
     var jsonData = json.decode(response.body);
     print (jsonData);
+//    var jsonObj = jsonData[index];
     Data data =  Data(jsonData["questions"],jsonData["options"]);
     return 'Done';
   }
@@ -56,8 +57,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     return boolList;
   }
 
-
-  void nextQuestion(String answer){
+  void nextQuestion({String answer, List boolList}){
     setState(() {
       //TODO send answer to answer list
       index++;
@@ -79,7 +79,7 @@ class _QuestionnaireState extends State<Questionnaire> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.green)),
-              onPressed: () => nextQuestion(options[0]),
+              onPressed: () => nextQuestion(answer:options[0]),
               color: Colors.green,
               child: Text(options[0]),
             ),
@@ -92,7 +92,7 @@ class _QuestionnaireState extends State<Questionnaire> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.green)),
-              onPressed: () => nextQuestion(options[1]),
+              onPressed: () => nextQuestion(boolList: boolList),
               color: Colors.green,
               child: Text(options[1]),
             ),
