@@ -1,3 +1,4 @@
+import 'package:demo/Summary.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -7,10 +8,13 @@ import 'dart:convert';
 class Data {
   final List questions;
   final List options;
-  final int userId;
   final String quesId;
+  List answers;
+  void setAnswers(List obj){
+    answers = obj;
+  }
 
-  Data(this.questions,this.options,this.quesId,{this.userId});
+  Data(this.questions,this.options,this.quesId,{this.answers});
 
 }
 
@@ -32,12 +36,9 @@ class _QuestionnaireState extends State<Questionnaire> {
   static TextStyle _bold = TextStyle(fontWeight: FontWeight.bold);
   static TextStyle _size30Bold =  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  List options = [["x","x"],["xx","xxx"],
-    ["xxx","xxx","xx x","xx x x"],["xx","xxx"]]  ;
-  List questions = ["xxxxxx",
-    "xxxxx",
-    "xxxxxx",
-    "x x x?"];
+  List options = [];
+  List questions = [];
+  List answers = [];
 
   //Get JSON data from server
   var url = 'http://ec2-54-160-79-156.compute-1.amazonaws.com:8080/questionnaire';
@@ -45,8 +46,6 @@ class _QuestionnaireState extends State<Questionnaire> {
   Future<Data> getData(int index) async {
     var response = await http. get(url);
     var jsonData = json.decode(response.body);
-    print (jsonData);
-    print (jsonData['ques_id']);
     data =  Data(jsonData['questions'],jsonData['options'],jsonData['ques_id']);
     questions = data.questions;
     options = data.options;
@@ -60,10 +59,29 @@ class _QuestionnaireState extends State<Questionnaire> {
     return boolList;
   }
 
-  void nextQuestion({String answer, List boolList}){
+  void nextQuestion({String answer, List bList}){
     setState(() {
       //TODO send answer to answer list
-      index++;
+      List output = [];
+      if (bList == null){//Yes or no question
+        output.add(answer);
+      } else {//Checklist
+        for (int i=0; i < bList.length; i++){
+          if (bList[i]) {//For each true in boolList
+            output.add(options[index][i]);
+          }
+        }
+        //Reset the checklist
+        boolList.fillRange(0,boolList.length, false);
+      }
+      //Add output to answer list
+      answers.add(output);
+      print(answers);
+      if (index == questions.length - 1){
+        data.setAnswers(answers);
+        Navigator.pushAndRemoveUntil(context,
+            MaterialPageRoute(builder: (context) => Summary(questionData: data,)),(route) => route == null);
+      } else {index++;}//TODO SEND DATA TO SUBMIT PAGE
     });
   }
 
@@ -95,7 +113,7 @@ class _QuestionnaireState extends State<Questionnaire> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.green)),
-              onPressed: () => nextQuestion(boolList: boolList),
+              onPressed: () => nextQuestion(answer:options[1]),
               color: Colors.green,
               child: Text(options[1]),
             ),
@@ -119,13 +137,13 @@ class _QuestionnaireState extends State<Questionnaire> {
           Center(
             child: ButtonTheme(
               child: FlatButton(
-                child: Text('Submit'),
+                child: Text('Next'),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Colors.green),
                 ),
                 color: Colors.green,
-                onPressed: nextQuestion,
+                onPressed: () => nextQuestion(bList: boolList),
               ),
             ),
           ),

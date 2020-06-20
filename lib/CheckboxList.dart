@@ -52,7 +52,7 @@ class CheckboxListPage extends State<CheckboxList>{
       checkboxData.closeW = widget.yndata.closeContactW;
       checkboxData.travel = widget.yndata.travel;
       Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) => Summary(checkboxData:checkboxData)),
+          MaterialPageRoute(builder: (context) => Summary()),
               (route) => route == null);
     });
   }
