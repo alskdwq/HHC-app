@@ -1,4 +1,5 @@
 import 'package:demo/Questionnaire.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/home.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -47,8 +48,7 @@ class _SummaryState extends State<Summary> {
               child: Center(
                 child: new Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                  ],
+                  children: addReview(widget.questionData.questions, widget.questionData.answers),
                 ),
               ),
             ),
@@ -104,8 +104,26 @@ class _SummaryState extends State<Summary> {
   }
 
   List<Widget> addReview(List que, List ans){
+    var joined = List<Widget>();
+    int lastIndex = que.length-1;
+    joined.add(Padding(padding: EdgeInsets.all(5)));
+    for (var i = 0; i<=lastIndex;i++){
+      Row questionAndAnswer = new Row(
+        children: <Widget>[
+          //Question
+          Column(crossAxisAlignment:CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(que[i]),
+              Text(ans[i].toString())
+            ],
+          ),
+        ],
+      );
+      joined.add(questionAndAnswer);
+      joined.add(Padding(padding: EdgeInsets.all(8)));
+    }
 
-    return null;
+    return joined;
   }
 
   @override

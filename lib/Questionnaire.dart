@@ -18,13 +18,6 @@ class Data {
 
 }
 
-//answer JSON format
-var answers = {
-  "user_id":0,
-  "ques_id":0,
-  "answers":[]
-};
-
 class Questionnaire extends StatefulWidget {
   @override
   _QuestionnaireState createState() => _QuestionnaireState();
@@ -32,7 +25,7 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   int index = 0;
-  List boolList = createBooleanList();
+  List boolList = createBooleanList(16);
   static TextStyle _bold = TextStyle(fontWeight: FontWeight.bold);
   static TextStyle _size30Bold =  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
@@ -52,8 +45,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     return data;
   }
 
-  static List createBooleanList(){
-    int length = 16;
+  static List createBooleanList(int length) {
     List boolList = new List(length);
     boolList.fillRange(0, length, false);
     return boolList;
@@ -66,10 +58,16 @@ class _QuestionnaireState extends State<Questionnaire> {
       if (bList == null){//Yes or no question
         output.add(answer);
       } else {//Checklist
+        bool empty = true;
         for (int i=0; i < bList.length; i++){
           if (bList[i]) {//For each true in boolList
+            empty = false;
             output.add(options[index][i]);
           }
+        }
+        int lastIndex = options[index].length-1;
+        if (empty){
+          output.add(options[index][lastIndex]);
         }
         //Reset the checklist
         boolList.fillRange(0,boolList.length, false);
@@ -155,9 +153,9 @@ class _QuestionnaireState extends State<Questionnaire> {
 
   List<Widget> createRowChildrenWithPadding(List options) {
     var joined = List<Widget>();
-    int last = options.length-1;
+    int lastIndex = options.length-1;
 
-    for (var i = 0;  i < last; i++) {
+    for (var i = 0;  i < lastIndex; i++) {
         //Checkboxes
         Row checkbox = new Row(
           children: <Widget>[
@@ -166,7 +164,7 @@ class _QuestionnaireState extends State<Questionnaire> {
               value: boolList[i],
               onChanged: (bool newValue) {
                 setState(() {
-                  if(newValue==true){boolList[last]=false;}
+                  if(newValue==true){boolList[lastIndex]=false;}
                   boolList[i] = newValue;
                 });
               },
@@ -183,16 +181,16 @@ class _QuestionnaireState extends State<Questionnaire> {
       children: <Widget>[
         Checkbox(
           activeColor: Colors.grey,
-          value: boolList[last],
+          value: boolList[lastIndex],
           onChanged: (bool newValue) {
             setState(() {
-              if(newValue==true){boolList.fillRange(0, last, false);}
-              boolList[last] = newValue;
+              if(newValue==true){boolList.fillRange(0, lastIndex, false);}
+              boolList[lastIndex] = newValue;
             });
           },
         ),
         Padding(padding: EdgeInsets.all(5),),
-        Text(options[last], style: _bold,)
+        Text(options[lastIndex], style: _bold,)
       ],
     );
     joined.add(lastCheckbox);
@@ -203,6 +201,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     if(optionsList.length == 2){//It is a yes/no question
       return createYesNoQuestionsButton(optionsList);
     } else {//It is a checkbox list
+      //TODO
       return createCheckBoxList(optionsList);
     }
   }
