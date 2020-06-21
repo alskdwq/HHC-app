@@ -2,7 +2,10 @@ import 'package:demo/Questionnaire.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/home.dart';
+import 'dart:convert';
+import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class Summary extends StatefulWidget {
   //Data from last page(CheckboxList.dart)
@@ -29,6 +32,29 @@ class _SummaryState extends State<Summary> {
     print('setting the health status: '+ status);
     await storage.write(key: 'healthState', value: isHealth== true?'healthy':'unhealthy');
   }
+
+  static Future<String> checkHealth() async{
+    return await storage.read(key: 'user_id');
+  }
+
+  void submit() async{
+    Future<String> id = checkHealth();
+    Map<String, String> headers = {"Content-Type":"application/json"};
+    final response = await http.post('http://ec2-54-160-79-156.compute-1.amazonaws.com:8080/submit',
+        headers:headers,
+        body: jsonEncode(
+        {
+          'user_id':id.toString(),
+          'ques_id':widget.questionData.quesId,
+          'answers':widget.questionData.answers
+        }
+        )
+    );
+    final responseData = response.body;
+    print(responseData);
+    responseData.toString() == '1' ? isHealth = false : isHealth = true;
+  }
+
   Container showReview(){
     Container container = new Container(
       child: SingleChildScrollView(
@@ -128,6 +154,7 @@ class _SummaryState extends State<Summary> {
 
   @override
   void initState() {
+    submit();
     super.initState();
   }
 
